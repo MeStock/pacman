@@ -2,14 +2,11 @@
 
 namespace pacman
 {
-    class PacmanLocation
+    class Program
     {
-        public int Row { get; set; }
-        public int Column { get; set; }
-        public PacmanLocation(int row, int column)
+        static void Main()
         {
-            Row = row;
-            Column = column;
+            Game.PlayGame();
         }
     }
 }
