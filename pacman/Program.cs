@@ -6,7 +6,7 @@ namespace pacman
     {
         static void Main()
         {
-            Game.PlayGame();
+            Game.Start();
         }
     }
 }

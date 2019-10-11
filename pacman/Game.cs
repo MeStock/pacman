@@ -1,57 +1,52 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Text;
+using System.Threading;
+
 namespace pacman
 {
-    public class Game
+    class Game
     {
-        ConsoleKeyInfo userInput;
-        public int cookies = 10;
+        public static PacPerson PacPerson = new PacPerson();
+        public static Board Board = new Board(PacPerson);
 
-        //public Game()
-        //{
-        //    Board = new Board();
-        //}
-
-        public static void PlayGame()
+        public static void Start()
         {
-            Game currentGame = new Game();
-            PacPerson currentPacPerson = new PacPerson();
-            while (currentGame.cookies > 0)
+            Board.RenderBoard();
+
+            Thread userInput = new Thread(GetUserInput);
+            userInput.Start();
+
+            while (Board.Cookies > 0)
             {
-                currentGame.GetUserInput(currentPacPerson);
-                currentGame.MovePacPerson(currentPacPerson);
-                currentGame.cookies--;
-                Console.WriteLine(currentGame.cookies);
+                Board.UpdatePacPersonLocation();
+                Thread.Sleep(100);
             }
+
         }
 
-        private void GetUserInput(PacPerson pacperson)
+        private static void GetUserInput()
         {
-            do
+            ConsoleKeyInfo userInput;
+            while (Board.Cookies > 0)
             {
-                Console.WriteLine("Use the arrow keys to choose the direction you would like to move PacMan");
-                userInput = Console.ReadKey(true);
-                pacperson.ChangeDirection((int)userInput.Key);
-            }
-                while ((int)userInput.Key < 37 || (int)userInput.Key > 40);
-        }
-
-        private void MovePacPerson(PacPerson pacperson)
-        {
-            if (pacperson.currentDirection == Direction.RightArrow)
-            {
-                //currentGame.UpdateBoard(0 column++);
-            }
-            else if (pacperson.currentDirection == Direction.LeftArrow)
-            {
-                //currentGame.UpdateBoard(0, column--);
-            }
-            else if (pacperson.currentDirection == Direction.UpArrow)
-            {
-                //currentGame.UpdateBoard(row--, 0);
-            }
-            else
-            {
-                //currentGame.UpdateBoard(row++, 0);
+                userInput = Console.ReadKey();
+                if (userInput.Key == ConsoleKey.UpArrow)
+                {
+                    PacPerson.ChangePacPersonDirection((Direction)userInput.Key);
+                }
+                else if (userInput.Key == ConsoleKey.RightArrow)
+                {
+                    PacPerson.ChangePacPersonDirection((Direction)userInput.Key);
+                }
+                else if (userInput.Key == ConsoleKey.DownArrow)
+                {
+                    PacPerson.ChangePacPersonDirection((Direction)userInput.Key);
+                }
+                else if (userInput.Key == ConsoleKey.LeftArrow)
+                {
+                    PacPerson.ChangePacPersonDirection((Direction)userInput.Key);
+                }
             }
         }
     }
