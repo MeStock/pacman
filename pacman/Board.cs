@@ -10,14 +10,18 @@ namespace pacman
 
         public char[,] GameBoard { get; }
         public PacPerson PacPerson { get; }
+        public Ghost GhostOne { get; }
         public PacPersonLocation CurrentPacPersonLocation { get; set; }
+        public PacPersonLocation CurrentGhostOneLocation { get; set; }
         public int Cookies { get; set; }
 
-        public Board(PacPerson pacPerson)
+        public Board(PacPerson pacPerson, Ghost ghostOne)
         {
             GameBoard = new char[BOARD_DEMENSION_ROW, BOARD_DEMENSION_COLUMN];
             PacPerson = pacPerson;
+            GhostOne = ghostOne;
             CurrentPacPersonLocation = new PacPersonLocation(BOARD_DEMENSION_ROW - 2, 1);
+            CurrentGhostOneLocation = new PacPersonLocation(1, BOARD_DEMENSION_COLUMN - 2);
             Cookies = INITIAL_COOKIES;
         }
 
@@ -25,7 +29,8 @@ namespace pacman
         {
             Console.Clear();
             FillBoard();
-            AddPacPersonToBoard();
+            AddPacPersonToBoard(CurrentPacPersonLocation, 'O');
+            AddPacPersonToBoard(CurrentGhostOneLocation, '\u263A');
 
             for (int row = 0; row < BOARD_DEMENSION_ROW; row++)
             {
@@ -63,9 +68,9 @@ namespace pacman
             GameBoard[BOARD_DEMENSION_ROW - 1, BOARD_DEMENSION_COLUMN - 1] = '+';
         }
 
-        public void AddPacPersonToBoard()
+        public void AddPacPersonToBoard(PacPersonLocation currentLocation, char symbol)
         {
-            GameBoard[CurrentPacPersonLocation.Row, CurrentPacPersonLocation.Column] = 'O';
+            GameBoard[currentLocation.Row, currentLocation.Column] = symbol;
             Cookies = Cookies - 1; // because pacPerson will 'eat' the cookie at its startig location
         }
 
@@ -110,6 +115,71 @@ namespace pacman
             CurrentPacPersonLocation = new PacPersonLocation(row, column);
             DecrementCookiesIfNeeded(CurrentPacPersonLocation.Row, CurrentPacPersonLocation.Column);
             WriteAt("O", CurrentPacPersonLocation.Row, CurrentPacPersonLocation.Column);
+        }
+
+        public void MoveGhostLocation(int row, int column)
+        {
+            char currentBoardState = GameBoard[CurrentGhostOneLocation.Row, CurrentGhostOneLocation.Column];
+            if (currentBoardState == '\u263A')
+            {
+                WriteAt(" ", CurrentGhostOneLocation.Row, CurrentGhostOneLocation.Column);
+            }
+            else
+            {
+                WriteAt(currentBoardState.ToString(), CurrentGhostOneLocation.Row, CurrentGhostOneLocation.Column);
+            } 
+            CurrentGhostOneLocation = new PacPersonLocation(row, column);
+            WriteAt("\u263A", CurrentGhostOneLocation.Row, CurrentGhostOneLocation.Column);
+        }
+
+        public void UpdateGhostLocation()
+        {
+            int row = CurrentGhostOneLocation.Row;
+            int column = CurrentGhostOneLocation.Column;
+
+            switch (GhostOne.CurrentDirection)
+            {
+                case Direction.Left:
+                    if (GameBoard[row, column - 1] != '|')
+                    {
+                        MoveGhostLocation(row, column - 1);
+                    }
+                    else
+                    {
+                        GhostOne.UpdateGhostDirection();
+                    }
+                    break;
+                case Direction.Up:
+                    if (GameBoard[row - 1, column] != '=')
+                    {
+                        MoveGhostLocation(row - 1, column);
+                    }
+                    else
+                    {
+                        GhostOne.UpdateGhostDirection();
+                    }
+                    break;
+                case Direction.Right:
+                    if (GameBoard[row, column + 1] != '|')
+                    {
+                        MoveGhostLocation(row, column + 1);
+                    }
+                    else
+                    {
+                        GhostOne.UpdateGhostDirection();
+                    }
+                    break;
+                case Direction.Down:
+                    if (GameBoard[row + 1, column] != '=')
+                    {
+                        MoveGhostLocation(row + 1, column);
+                    }
+                    else
+                    {
+                        GhostOne.UpdateGhostDirection();
+                    }
+                    break;
+            }
         }
 
         private static void WriteAt(string s, int row, int column)
