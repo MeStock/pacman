@@ -28,7 +28,6 @@ namespace pacman
         public void RenderBoard()
         {
             Console.Clear();
-            FillBoard();
             AddPacPersonToBoard(CurrentPacPersonLocation, 'O');
             AddPacPersonToBoard(CurrentGhostOneLocation, '\u263A');
 
@@ -100,7 +99,7 @@ namespace pacman
                     }
                     break;
                 case Direction.Down:
-                    if (GameBoard[row + 1, column] != '▄' && GameBoard[row + 1, column] != '▀')
+                    if (GameBoard[row + 1, column] != '█' && GameBoard[row + 1, column] != '▄' && GameBoard[row + 1, column] != '▀')
                     {
                         MovePacPersonAndEmptyPreviousLocation(row + 1, column);
                     }
@@ -140,7 +139,7 @@ namespace pacman
             switch (GhostOne.CurrentDirection)
             {
                 case Direction.Left:
-                    if (GameBoard[row, column - 1] != '|')
+                    if (GameBoard[row, column - 1] != '█' && GameBoard[row, column - 1] != '▄' && GameBoard[row, column - 1] != '▀')
                     {
                         MoveGhostLocation(row, column - 1);
                     }
@@ -150,7 +149,7 @@ namespace pacman
                     }
                     break;
                 case Direction.Up:
-                    if (GameBoard[row - 1, column] != '=')
+                    if (GameBoard[row - 1, column] != '▄' && GameBoard[row - 1, column] != '▀' && GameBoard[row - 1, column] != '█')
                     {
                         MoveGhostLocation(row - 1, column);
                     }
@@ -160,7 +159,7 @@ namespace pacman
                     }
                     break;
                 case Direction.Right:
-                    if (GameBoard[row, column + 1] != '|')
+                    if (GameBoard[row, column + 1] != '█' && GameBoard[row, column + 1] != '▄' && GameBoard[row, column + 1] != '▀')
                     {
                         MoveGhostLocation(row, column + 1);
                     }
@@ -170,7 +169,7 @@ namespace pacman
                     }
                     break;
                 case Direction.Down:
-                    if (GameBoard[row + 1, column] != '=')
+                    if (GameBoard[row + 1, column] != '█' && GameBoard[row + 1, column] != '▄' && GameBoard[row + 1, column] != '▀')
                     {
                         MoveGhostLocation(row + 1, column);
                     }
