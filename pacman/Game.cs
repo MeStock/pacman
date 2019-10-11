@@ -6,21 +6,29 @@ namespace pacman
     class Game
     {
         public static PacPerson PacPerson = new PacPerson();
-        public static Board Board = new Board(PacPerson);
+        public static Ghost GhostOne = new Ghost();
+        public static Board Board = new Board(PacPerson, GhostOne);
 
         public static void Start()
         {
             Board.RenderBoard();
 
             Thread userInput = new Thread(GetUserInput);
+            Thread controlGhostMovements = new Thread(GhostOne.ContinouslyUpdateGhostDirection);
             userInput.Start();
+            controlGhostMovements.Start();
 
             while (Board.Cookies > 0)
             {
                 Board.UpdatePacPersonLocation();
+                Board.UpdateGhostLocation();
+                if (Board.CurrentPacPersonLocation.Row == Board.CurrentGhostOneLocation.Row &&
+                    Board.CurrentPacPersonLocation.Column == Board.CurrentGhostOneLocation.Column)
+                {
+                    Environment.Exit(0);
+                }
                 Thread.Sleep(100);
             }
-
         }
 
         private static void GetUserInput()
