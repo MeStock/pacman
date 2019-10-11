@@ -6,7 +6,7 @@ namespace pacman
     {
         public static int BOARD_DEMENSION_ROW = 28;
         public static int BOARD_DEMENSION_COLUMN = 30;
-        public static int INITIAL_COOKIES = (BOARD_DEMENSION_ROW - 2) * (BOARD_DEMENSION_COLUMN - 2);
+        public static int INITIAL_COOKIES = 378;
 
         public char[,] GameBoard { get; set;}
         public PacPerson PacPerson { get; }
@@ -81,7 +81,11 @@ namespace pacman
             switch (PacPerson.CurrentDirection)
             {
                 case Direction.Left:
-                    if (GameBoard[row, column - 1] != '█' && GameBoard[row, column - 1] != '▄' && GameBoard[row, column - 1] != '▀')
+                    if (CurrentPacPersonLocation.Row == 12 && CurrentPacPersonLocation.Column == 0)
+                    {
+                        MovePacPersonAndEmptyPreviousLocation(12, Board.BOARD_DEMENSION_COLUMN - 1);
+                    }
+                    else if (GameBoard[row, column - 1] != '█' && GameBoard[row, column - 1] != '▄' && GameBoard[row, column - 1] != '▀')
                     {
                         MovePacPersonAndEmptyPreviousLocation(row, column - 1);
                     }
@@ -93,7 +97,11 @@ namespace pacman
                     }
                     break;
                 case Direction.Right:
-                    if (GameBoard[row, column + 1] != '█' && GameBoard[row, column + 1] != '▄' && GameBoard[row, column + 1] != '▀')
+                    if (CurrentPacPersonLocation.Row == 12 && CurrentPacPersonLocation.Column == Board.BOARD_DEMENSION_COLUMN - 1)
+                    {
+                        MovePacPersonAndEmptyPreviousLocation(12, 0);
+                    }
+                    else if (GameBoard[row, column + 1] != '█' && GameBoard[row, column + 1] != '▄' && GameBoard[row, column + 1] != '▀')
                     {
                         MovePacPersonAndEmptyPreviousLocation(row, column + 1);
                     }
@@ -139,7 +147,11 @@ namespace pacman
             switch (GhostOne.CurrentDirection)
             {
                 case Direction.Left:
-                    if (GameBoard[row, column - 1] != '█' && GameBoard[row, column - 1] != '▄' && GameBoard[row, column - 1] != '▀')
+                    if (CurrentGhostOneLocation.Row == 12 && CurrentGhostOneLocation.Column == 0)
+                    {
+                        MoveGhostLocation(12, Board.BOARD_DEMENSION_COLUMN - 1);
+                    }
+                    else if (GameBoard[row, column - 1] != '█' && GameBoard[row, column - 1] != '▄' && GameBoard[row, column - 1] != '▀')
                     {
                         MoveGhostLocation(row, column - 1);
                     }
@@ -159,7 +171,11 @@ namespace pacman
                     }
                     break;
                 case Direction.Right:
-                    if (GameBoard[row, column + 1] != '█' && GameBoard[row, column + 1] != '▄' && GameBoard[row, column + 1] != '▀')
+                    if (CurrentGhostOneLocation.Row == 12 && CurrentGhostOneLocation.Column == Board.BOARD_DEMENSION_COLUMN - 1)
+                    {
+                        MoveGhostLocation(12, 0);
+                    }
+                    else if (GameBoard[row, column + 1] != '█' && GameBoard[row, column + 1] != '▄' && GameBoard[row, column + 1] != '▀')
                     {
                         MoveGhostLocation(row, column + 1);
                     }
@@ -209,7 +225,7 @@ namespace pacman
 
         // The ASCII character code for the '█' is alt - 219 and '▀' is alt - 220
         public char[,] CreateBoard()
-        {
+        {// 12, 0 and 12, BOARD_DIMENSTION_COLUMN - 1
             return new char[28, 30]
             {
                 {'█','▀','▀','▀','▀','▀','▀','▀','▀','▀','▀','▀','▀','█','█','█','█','▀','▀','▀','▀','▀','▀','▀','▀','▀','▀','▀','▀','█'},
