@@ -1,36 +1,21 @@
 ﻿using System;
+
 namespace pacman
 {
-    public enum Direction { LeftArrow = 37, UpArrow = 38, RightArrow = 39, DownArrow = 40};
+    public enum Direction { Left = 37, Up = 38, Right = 39, Down = 40 };
 
-public class PacPerson
+    class PacPerson
     {
-        public Direction currentDirection { get; set; }
+        public Direction CurrentDirection { get; set; }
 
         public PacPerson()
         {
-            currentDirection = Direction.RightArrow;
+            CurrentDirection = Direction.Right;
         }
 
-        public void ChangeDirection(int userInput)
+        public void ChangePacPersonDirection(Direction directionToFace)
         {
-            switch (userInput)
-            {
-                case (int)Direction.LeftArrow:
-                    currentDirection = Direction.LeftArrow;
-                    break;
-                case (int)Direction.UpArrow:
-                    currentDirection = Direction.UpArrow;
-                    break;
-                case (int)Direction.DownArrow:
-                    currentDirection = Direction.DownArrow;
-                    break;
-                case (int)Direction.RightArrow:
-                    currentDirection = Direction.RightArrow;
-                    break;
-                default: 
-                    break;
-            }
+            CurrentDirection = directionToFace;
         }
     }
 }
