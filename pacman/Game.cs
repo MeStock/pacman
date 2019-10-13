@@ -24,7 +24,7 @@ namespace pacman
             controlGhostTwoMovements.Start();
             controlGhostThreeMovements.Start();
 
-            while (Board.Cookies > 0)
+            while (true)
             {
                 Board.UpdatePacPersonLocation();
                 Board.UpdateGhostLocation(GhostOne, Board.CurrentGhostOneLocation);
@@ -37,7 +37,9 @@ namespace pacman
                     Board.CurrentPacPersonLocation.Column == Board.CurrentGhostTwoLocation.Column) ||
 
                     (Board.CurrentPacPersonLocation.Row == Board.CurrentGhostThreeLocation.Row &&
-                    Board.CurrentPacPersonLocation.Column == Board.CurrentGhostThreeLocation.Column))
+                    Board.CurrentPacPersonLocation.Column == Board.CurrentGhostThreeLocation.Column) ||
+
+                    Board.Cookies == 0)
                 {
                     Environment.Exit(0);
                 }
