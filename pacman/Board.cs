@@ -11,17 +11,25 @@ namespace pacman
         public char[,] GameBoard { get; set;}
         public PacPerson PacPerson { get; }
         public Ghost GhostOne { get; }
+        public Ghost GhostTwo { get; }
+        public Ghost GhostThree { get; }
         public PacPersonLocation CurrentPacPersonLocation { get; set; }
         public PacPersonLocation CurrentGhostOneLocation { get; set; }
+        public PacPersonLocation CurrentGhostTwoLocation { get; set; }
+        public PacPersonLocation CurrentGhostThreeLocation { get; set; }
         public int Cookies { get; set; }
 
-        public Board(PacPerson pacPerson, Ghost ghostOne)
+        public Board(PacPerson pacPerson, Ghost ghostOne, Ghost ghostTwo, Ghost ghostThree)
         {
             GameBoard = CreateBoard();
             PacPerson = pacPerson;
             GhostOne = ghostOne;
+            GhostOne = ghostTwo;
+            GhostOne = ghostThree;
             CurrentPacPersonLocation = new PacPersonLocation(BOARD_DEMENSION_ROW - 2, 1);
             CurrentGhostOneLocation = new PacPersonLocation(1, BOARD_DEMENSION_COLUMN - 2);
+            CurrentGhostTwoLocation = new PacPersonLocation(1, 1);
+            CurrentGhostThreeLocation = new PacPersonLocation(BOARD_DEMENSION_ROW - 2, BOARD_DEMENSION_COLUMN - 2);
             Cookies = INITIAL_COOKIES;
         }
 
@@ -30,6 +38,8 @@ namespace pacman
             Console.Clear();
             AddPacPersonToBoard(CurrentPacPersonLocation, 'O');
             AddPacPersonToBoard(CurrentGhostOneLocation, '\u263A');
+            AddPacPersonToBoard(CurrentGhostTwoLocation, '\u263A');
+            AddPacPersonToBoard(CurrentGhostThreeLocation, '\u263A');
 
             for (int row = 0; row < BOARD_DEMENSION_ROW; row++)
             {
@@ -39,32 +49,6 @@ namespace pacman
                 }
                 Console.WriteLine();
             }
-        }
-
-        public void FillBoard()
-        {
-            for (int row = 0; row < BOARD_DEMENSION_ROW; row++)
-            {
-                for (int column = 0; column < BOARD_DEMENSION_COLUMN; column++)
-                {
-                    if (row == 0 || row == BOARD_DEMENSION_ROW - 1)
-                    {
-                        GameBoard[row, column] = '=';
-                    }
-                    else
-                    {
-                        GameBoard[row, column] = '∙';
-                    }
-                }
-
-                GameBoard[row, 0] = '|';
-                GameBoard[row, BOARD_DEMENSION_COLUMN - 1] = '|';
-            }
-
-            GameBoard[0, 0] = '+';
-            GameBoard[0, BOARD_DEMENSION_COLUMN - 1] = '+';
-            GameBoard[BOARD_DEMENSION_ROW - 1, 0] = '+';
-            GameBoard[BOARD_DEMENSION_ROW - 1, BOARD_DEMENSION_COLUMN - 1] = '+';
         }
 
         public void AddPacPersonToBoard(PacPersonLocation currentLocation, char symbol)
@@ -124,74 +108,75 @@ namespace pacman
             WriteAt("O", CurrentPacPersonLocation.Row, CurrentPacPersonLocation.Column);
         }
 
-        public void MoveGhostLocation(int row, int column)
+        public void MoveGhostLocation(PacPersonLocation ghostLocation, int row, int column)
         {
-            char currentBoardState = GameBoard[CurrentGhostOneLocation.Row, CurrentGhostOneLocation.Column];
+            char currentBoardState = GameBoard[ghostLocation.Row, ghostLocation.Column];
             if (currentBoardState == '\u263A')
             {
-                WriteAt(" ", CurrentGhostOneLocation.Row, CurrentGhostOneLocation.Column);
+                WriteAt(" ", ghostLocation.Row, ghostLocation.Column);
             }
             else
             {
-                WriteAt(currentBoardState.ToString(), CurrentGhostOneLocation.Row, CurrentGhostOneLocation.Column);
-            } 
-            CurrentGhostOneLocation = new PacPersonLocation(row, column);
-            WriteAt("\u263A", CurrentGhostOneLocation.Row, CurrentGhostOneLocation.Column);
+                WriteAt(currentBoardState.ToString(), ghostLocation.Row, ghostLocation.Column);
+            }
+            ghostLocation.Row = row;
+            ghostLocation.Column = column;
+            WriteAt("\u263A", ghostLocation.Row, ghostLocation.Column);
         }
 
-        public void UpdateGhostLocation()
+        public void UpdateGhostLocation(Ghost ghost, PacPersonLocation ghostLocation)
         {
-            int row = CurrentGhostOneLocation.Row;
-            int column = CurrentGhostOneLocation.Column;
+            int row = ghostLocation.Row;
+            int column = ghostLocation.Column;
 
-            switch (GhostOne.CurrentDirection)
+            switch (ghost.CurrentDirection)
             {
                 case Direction.Left:
-                    if (CurrentGhostOneLocation.Row == 12 && CurrentGhostOneLocation.Column == 0)
+                    if (ghostLocation.Row == 12 && ghostLocation.Column == 0)
                     {
-                        MoveGhostLocation(12, Board.BOARD_DEMENSION_COLUMN - 1);
+                        MoveGhostLocation(ghostLocation, 12, Board.BOARD_DEMENSION_COLUMN - 1);
                     }
                     else if (GameBoard[row, column - 1] != '█' && GameBoard[row, column - 1] != '▄' && GameBoard[row, column - 1] != '▀')
                     {
-                        MoveGhostLocation(row, column - 1);
+                        MoveGhostLocation(ghostLocation, row, column - 1);
                     }
                     else
                     {
-                        GhostOne.UpdateGhostDirection();
+                        ghost.UpdateGhostDirection();
                     }
                     break;
                 case Direction.Up:
                     if (GameBoard[row - 1, column] != '▄' && GameBoard[row - 1, column] != '▀' && GameBoard[row - 1, column] != '█')
                     {
-                        MoveGhostLocation(row - 1, column);
+                        MoveGhostLocation(ghostLocation, row - 1, column);
                     }
                     else
                     {
-                        GhostOne.UpdateGhostDirection();
+                        ghost.UpdateGhostDirection();
                     }
                     break;
                 case Direction.Right:
-                    if (CurrentGhostOneLocation.Row == 12 && CurrentGhostOneLocation.Column == Board.BOARD_DEMENSION_COLUMN - 1)
+                    if (ghostLocation.Row == 12 && ghostLocation.Column == Board.BOARD_DEMENSION_COLUMN - 1)
                     {
-                        MoveGhostLocation(12, 0);
+                        MoveGhostLocation(ghostLocation, 12, 0);
                     }
                     else if (GameBoard[row, column + 1] != '█' && GameBoard[row, column + 1] != '▄' && GameBoard[row, column + 1] != '▀')
                     {
-                        MoveGhostLocation(row, column + 1);
+                        MoveGhostLocation(ghostLocation, row, column + 1);
                     }
                     else
                     {
-                        GhostOne.UpdateGhostDirection();
+                        ghost.UpdateGhostDirection();
                     }
                     break;
                 case Direction.Down:
                     if (GameBoard[row + 1, column] != '█' && GameBoard[row + 1, column] != '▄' && GameBoard[row + 1, column] != '▀')
                     {
-                        MoveGhostLocation(row + 1, column);
+                        MoveGhostLocation(ghostLocation, row + 1, column);
                     }
                     else
                     {
-                        GhostOne.UpdateGhostDirection();
+                        ghost.UpdateGhostDirection();
                     }
                     break;
             }
